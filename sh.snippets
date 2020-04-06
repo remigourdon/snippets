@@ -1,0 +1,146 @@
+# See https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/)
+#   `set -E`: force ERR to be inherited by shell functions, substitutions and commands
+#   `set -e`: exit when a command fails
+#   `set -u`: treat unset variables and parameters as errors
+#   `set -o pipefail`: set exit code of pipeline to righmost non-zero
+
+snippet bang "Add bash shebang"
+#!/bin/bash
+# ${0:Description}
+set -Eeuo pipefail
+endsnippet
+
+snippet basis "Add a bash shebang usage and getopts functions"
+#!/bin/bash
+# ${1:Description}
+set -Eeuo pipefail
+
+#########
+# USAGE #
+#########
+
+usage() {
+    echo "Usage: $(basename "\${0}") [OPTIONS]
+
+$1.
+
+OPTIONS:
+    -h    Display this message"
+}
+
+###################
+# OPTIONS PARSING #
+###################
+
+while getopts 'h' opts ; do
+    case "${opts}" in
+        h)
+            usage
+			exit 1
+            ;;
+        ?)
+            usage
+            exit 1
+            ;;
+    esac
+done
+shift "$((OPTIND - 1))"
+
+${0}
+endsnippet
+
+snippet args "Add arguments parsing"
+################
+# ARGS PARSING #
+################
+
+if [[ \${#} -ne ${2:1} ]] ; then
+    usage
+    exit 1
+else
+    ${1:ARG1}="\${1}"
+fi
+${0}
+endsnippet
+
+snippet shellcheck "Typical shellcheck options"
+# shellcheck ${1:shell=bash} ${2:disable=SC1091}${0}
+endsnippet
+
+snippet box "Comment header box"
+#${2:#}
+# ${1:HEADER} #
+#$2
+${0}
+endsnippet
+
+snippet if "An if"
+if ${1:[[ ${2:CONDITION} ]]} ; then
+    ${0}
+fi
+endsnippet
+
+snippet ifn "An if not"
+if ! ${1:[[ ${2:CONDITION} ]]} ; then
+    ${0}
+fi
+endsnippet
+
+snippet switch "A switch"
+case "${${1:VARIABLE}}" in
+    ${2:OPTION})
+        ${3:ACTION}
+        ;;
+    ?)
+        ${4:DEFAULT_ACTION}
+        ;;
+esac
+endsnippet
+
+snippet for "A for"
+for ${1:ITEM} in ${2:SOURCE} ; do
+    ${0}
+done
+endsnippet
+
+snippet while "A while"
+while ${1:[[ ${2:CONDITION} ]]} ; do
+    ${0}
+done
+endsnippet
+
+snippet whilerf "A while read from file"
+while read -r ${1:ITEM} ; do
+    ${0}
+done < ${2:FILE}
+endsnippet
+
+snippet whilerc "A while read from command"
+while read -r ${1:ITEM} ; do
+    ${0}
+done < <(${2:COMMAND})
+endsnippet
+
+snippet ve "A properly quoted variable" i
+"${${1:VAR}}"${0}
+endsnippet
+
+snippet ae "A properly quoted array" i
+"${${1:VAR}[${2:@}]}"${0}
+endsnippet
+
+snippet se "A properly quoted shell" i
+"$(${1:VAR})"${0}
+endsnippet
+
+snippet ceof "A cat with EOF"
+cat >${1:&1} <<EOF
+${0}
+EOF
+endsnippet
+
+snippet function "A function"
+${1:functionName}() {
+	${0}
+}
+endsnippet
