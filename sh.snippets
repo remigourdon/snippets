@@ -144,3 +144,8 @@ ${1:functionName}() {
 	${0}
 }
 endsnippet
+
+snippet trapjobs "Trap background jobs on exit"
+# Trap background jobs on exit
+trap 'kill $(jobs -p)' EXIT
+endsnippet
